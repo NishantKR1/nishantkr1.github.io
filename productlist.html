@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product List</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.8/css/bootstrap.min.css" integrity="sha512-2bBQCjcnw658Lho4nlXJcc6WkV/UxpE/sAokbXPxQNGqmNdQrWqtw26Ns9kFF/yG792pKR1Sx8/Y1Lf1XN4GKA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+</head>
+<body>
+    <div class="container my-4">
+        <h2 class="mb-4">Product List</h2>
+        <div id="section" class="row g-4"></div>
+    </div>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js" integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script>    
+        $(document).ready(function(){
+            $.ajax({
+                type: "GET",
+                url: "https://fakestoreapi.com/products",
+                success: function(response){
+                    if(response){
+                         let html = "";
+                            response.forEach(product => {
+                                html += `
+                                    <div class="col-md-4">
+                                        <div class="card h-100 shadow-sm"> <img src="${product.image}" class="card-img-top p-3" alt="${product.title}" style="height:250px; object-fit:contain;">
+                                            <div class="card-body">
+                                                <h5 class="card-title">${product.title}</h5>
+                                                <p class="card-text text-truncate">${product.description}</p>
+                                                <p class="fw-bold">$${product.price}</p> <a href="#" class="btn btn-primary">Buy Now</a> </div>
+                                        </div>
+                                    </div> `;
+                        });
+                        $("#section").html(html);
+                    }
+
+                },
+                error: function(xhr){
+                    console.log(xhr);
+                }
+            })
+        });
+    </script>
+</body>
+</html>
