@@ -5,6 +5,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Product List</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.8/css/bootstrap.min.css" integrity="sha512-2bBQCjcnw658Lho4nlXJcc6WkV/UxpE/sAokbXPxQNGqmNdQrWqtw26Ns9kFF/yG792pKR1Sx8/Y1Lf1XN4GKA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <style>
+        .card {
+            transition: 0.3s all ease-in-out;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.1); 
+            }
+
+        .card:hover {
+            transform: translateY(-5px); 
+            box-shadow: 0 8px 20px rgba(0,0,0,0.2); 
+        }
+
+    </style>
 </head>
 <body>
     <div class="container my-4">
@@ -12,7 +24,32 @@
         <div id="section" class="row g-4"></div>
     </div>
     
+    <div class="modal fade" id="productModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalTitle"></h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-5"> <img id="modalImage" class="img-fluid" alt=""> </div>
+                        <div class="col-md-7">
+                            <p id="modalDescription"></p>
+                            <p class="fw-bold" id="modalPrice"></p>
+                            <p><span class="badge bg-secondary" id="modalCategory"></span></p>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js" integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.8/js/bootstrap.bundle.min.js"></script>
     <script>    
         $(document).ready(function(){
             $.ajax({
@@ -28,7 +65,7 @@
                                             <div class="card-body">
                                                 <h5 class="card-title">${product.title}</h5>
                                                 <p class="card-text text-truncate">${product.description}</p>
-                                                <p class="fw-bold">$${product.price}</p> <a href="#" class="btn btn-primary">Buy Now</a> </div>
+                                                <p class="fw-bold">$${product.price}</p> <button type="button" class="btn btn-primary w-100" onclick="fnShowModal(${product.id})">View</button> </div>
                                         </div>
                                     </div> `;
                         });
@@ -39,8 +76,38 @@
                 error: function(xhr){
                     console.log(xhr);
                 }
-            })
+            });
+
+            $(document).on("click", ".view-btn", function(){
+                let id = $(this).data("id");
+                fnShowModal(id);
+            });
+
         });
+        
+        function fnShowModal(id){
+                $.ajax({
+                    type: "GET",
+                    url: "https://fakestoreapi.com/products/"+id,
+                    success: function(response){
+                        if(response){
+                            
+                            $("#modalTitle").text(response.title);
+                            $("#modalImage").attr("src", response.image).attr("alt", response.title);
+                            $("#modalDescription").text(response.description);
+                            $("#modalPrice").text("$" + response.price);
+                            $("#modalCategory").text(response.category);
+
+                            let modal = new bootstrap.Modal($("#productModal"));
+                            modal.show();
+                        }
+
+                    },
+                    error: function(xhr){
+                        console.log(xhr);
+                    }
+                });
+            }
     </script>
 </body>
 </html>
